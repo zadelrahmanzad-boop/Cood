@@ -2,18 +2,14 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>EH License Generator</title>
 
 <style>
-
 body{
     font-family:Tahoma;
     background:#f3f5f7;
     padding:40px;
 }
-
 .box{
     max-width:500px;
     margin:auto;
@@ -22,69 +18,45 @@ body{
     border-radius:10px;
     box-shadow:0 0 10px rgba(0,0,0,.1);
 }
-
-h2{
-    text-align:center;
-    margin-bottom:25px;
-}
-
-label{
-    display:block;
-    margin-top:15px;
-    margin-bottom:5px;
-    font-weight:bold;
-}
-
-input, textarea{
+h2{text-align:center;}
+label{display:block;margin-top:15px;font-weight:bold;}
+input,textarea{
     width:100%;
     padding:10px;
     border:1px solid #ccc;
     border-radius:6px;
-    font-size:16px;
-    box-sizing:border-box;
 }
-
-textarea{
-    height:120px;
-    resize:none;
-}
-
+textarea{height:120px;}
 button{
     width:100%;
     margin-top:20px;
     padding:12px;
-    border:none;
     background:#0078d7;
     color:#fff;
-    font-size:18px;
+    border:none;
     border-radius:6px;
     cursor:pointer;
 }
-
-button:hover{
-    background:#005ea6;
-}
-
+button:hover{background:#005ea6;}
 </style>
 </head>
+
 <body>
 
 <div class="box">
 
-    <h2>مولد أكواد التفعيل</h2>
+<h2>مولد أكواد التفعيل</h2>
 
-    <label>Device Code</label>
-    <input type="text" id="txtDeviceCode">
+<label>Device Code</label>
+<input type="text" id="txtDeviceCode">
 
-    <label>عدد الأيام</label>
-    <input type="number" id="txtDays">
+<label>عدد الأيام</label>
+<input type="number" id="txtDays">
 
-    <button onclick="generateCode()">
-        توليد الكود
-    </button>
+<button onclick="generateCode()">توليد الكود</button>
 
-    <label>كود التفعيل</label>
-    <textarea id="txtCode" readonly></textarea>
+<label>كود التفعيل</label>
+<textarea id="txtCode" readonly></textarea>
 
 </div>
 
@@ -93,16 +65,11 @@ button:hover{
 const SECRET_KEY = "EH_LOCK_2026";
 
 function makeSign(txt){
-
     let s = 0;
-
     for(let i=0;i<txt.length;i++){
-
         s += txt.charCodeAt(i);
-
         s = s % 100000000;
     }
-
     return String(s).padStart(8,'0');
 }
 
@@ -112,7 +79,8 @@ function encrypt(txt){
 
     for(let i=0;i<txt.length;i++){
 
-        let k = i % SECRET_KEY.length;
+        // ✅ FIXED (مطابق لـ Access)
+        let k = (i % SECRET_KEY.length);
 
         let ch = txt.charCodeAt(i) ^
                  SECRET_KEY.charCodeAt(k);
@@ -126,20 +94,13 @@ function encrypt(txt){
 }
 
 function formatDate(){
-
     let d = new Date();
-
-    let day = String(d.getDate()).padStart(2,'0');
-
-    let month = String(d.getMonth()+1).padStart(2,'0');
-
-    let year = d.getFullYear();
-
-    return day + month + year;
+    return String(d.getDate()).padStart(2,'0') +
+           String(d.getMonth()+1).padStart(2,'0') +
+           d.getFullYear();
 }
 
 function randomHex(){
-
     return Math.floor(Math.random()*65535)
            .toString(16)
            .toUpperCase()
@@ -148,21 +109,15 @@ function randomHex(){
 
 function generateCode(){
 
-    let deviceID =
-        document.getElementById("txtDeviceCode")
-        .value.trim();
-
-    let daysCount =
-        parseInt(document.getElementById("txtDays").value);
+    let deviceID = document.getElementById("txtDeviceCode").value.trim();
+    let daysCount = parseInt(document.getElementById("txtDays").value);
 
     if(deviceID === ""){
-
         alert("ادخل Device Code");
         return;
     }
 
     if(!daysCount || daysCount <= 0){
-
         alert("عدد الأيام غير صحيح");
         return;
     }
@@ -176,17 +131,13 @@ function generateCode(){
 
     let sign = makeSign(raw + SECRET_KEY);
 
-    let finalCode =
-        encrypt(raw + "|" + sign);
+    let finalCode = encrypt(raw + "|" + sign);
 
-    let txtCode =
-        document.getElementById("txtCode");
+    let box = document.getElementById("txtCode");
+    box.value = finalCode;
 
-    txtCode.value = finalCode;
-
-    txtCode.select();
-
-    navigator.clipboard.writeText(finalCode);
+    box.select();
+    document.execCommand("copy");
 
     alert("تم نسخ الكود");
 }
