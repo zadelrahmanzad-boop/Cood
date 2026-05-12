@@ -1,10 +1,97 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EH License Generator</title>
+
+<style>
+body{
+    font-family:Tahoma;
+    background:#f3f5f7;
+    padding:40px;
+}
+
+.box{
+    max-width:500px;
+    margin:auto;
+    background:#fff;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+label{
+    display:block;
+    margin-top:15px;
+    font-weight:bold;
+}
+
+input,textarea{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    font-size:16px;
+    box-sizing:border-box;
+}
+
+textarea{
+    height:120px;
+    resize:none;
+}
+
+button{
+    width:100%;
+    margin-top:20px;
+    padding:12px;
+    border:none;
+    background:#0078d7;
+    color:#fff;
+    font-size:18px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#005ea6;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+    <h2>مولد أكواد التفعيل</h2>
+
+    <label>Device Code</label>
+    <input type="text" id="txtDeviceCode">
+
+    <label>عدد الأيام</label>
+    <input type="number" id="txtDays">
+
+    <button onclick="generateCode()">توليد الكود</button>
+
+    <label>كود التفعيل</label>
+    <textarea id="txtCode" readonly></textarea>
+
+</div>
+
 <script>
 
 const SECRET_KEY = "EH_LOCK_2026";
 
-//====================
-// SIGN
-//====================
+//=========================
+// التوقيع
+//=========================
 function makeSign(txt){
     let s = 0;
 
@@ -15,9 +102,9 @@ function makeSign(txt){
     return String(s).padStart(8,'0');
 }
 
-//====================
-// ENCRYPT (مطابق Access 100%)
-//====================
+//=========================
+// التشفير (مطابق Access)
+//=========================
 function encrypt(txt){
 
     let result = "";
@@ -37,21 +124,23 @@ function encrypt(txt){
     return result;
 }
 
-//====================
-// DATE (مطابق Access)
-//====================
+//=========================
+// التاريخ
+//=========================
 function formatDate(){
 
     let d = new Date();
 
-    return String(d.getDate()).padStart(2,'0') +
-           String(d.getMonth()+1).padStart(2,'0') +
-           d.getFullYear();
+    let day = String(d.getDate()).padStart(2,'0');
+    let month = String(d.getMonth()+1).padStart(2,'0');
+    let year = d.getFullYear();
+
+    return day + month + year;
 }
 
-//====================
-// RANDOM
-//====================
+//=========================
+// random
+//=========================
 function randomHex(){
 
     return Math.floor(Math.random()*65535)
@@ -60,15 +149,15 @@ function randomHex(){
         .padStart(4,'0');
 }
 
-//====================
-// MAIN
-//====================
+//=========================
+// توليد الكود
+//=========================
 function generateCode(){
 
     let deviceID = document.getElementById("txtDeviceCode").value.trim();
     let daysCount = parseInt(document.getElementById("txtDays").value);
 
-    if(!deviceID){
+    if(deviceID === ""){
         alert("ادخل Device Code");
         return;
     }
@@ -96,7 +185,10 @@ function generateCode(){
     box.select();
     document.execCommand("copy");
 
-    alert("تم نسخ الكود");
+    alert("تم نسخ كود التفعيل");
 }
 
 </script>
+
+</body>
+</html>
